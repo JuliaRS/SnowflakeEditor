@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Make the snowflake!</title>
+    <link rel="manifest" href="manifest.json"/>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#222">
+    <link rel="icon" href="icon.png">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet1" href="./css/player_style.css">
+    <script src="js/aframe.js"></script>
+    <script src="js/player.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+</head>
+
+<body>
+
+<div class="wrapper">
+    <canvas id="main_canvas"></canvas>
+    <canvas id="dot_canvas"></canvas>
+    <div class="cover left"></div>
+    <div class="cover right"></div>
+</div>
+<div class="btns">
+    <div class="preview">
+        <p>PREVIEW</p>
+        <p>EDIT</p>
+    </div>
+    <div class="start">
+        <p>Let it snow</p>
+        <p>Stop</p>
+    </div>
+    <div class="refill">
+        <p>Reset</p>
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="454.839px" height="454.839px" viewBox="0 0 454.839 454.839" style="enable-background:new 0 0 454.839 454.839;" xml:space="preserve">
+                <g>
+                    <path d="M404.908,283.853c0,94.282-76.71,170.986-170.986,170.986h-60.526c-10.03,0-18.158-8.127-18.158-18.157v-6.053
+        c0-10.031,8.127-18.158,18.158-18.158h60.526c70.917,0,128.618-57.701,128.618-128.618c0-70.917-57.701-128.618-128.618-128.618
+        H122.255l76.905,76.905c8.26,8.257,8.26,21.699,0,29.956c-8.015,8.009-21.964,7.997-29.961,0L56.137,149.031
+        c-4.001-4.001-6.206-9.321-6.206-14.981c0-5.656,2.205-10.979,6.206-14.978L169.205,6.002c7.997-8.003,21.958-8.003,29.956,0
+        c8.26,8.255,8.26,21.699,0,29.953l-76.905,76.911h111.666C328.198,112.866,404.908,189.573,404.908,283.853z" />
+                </g>
+            </svg>
+    </div>
+</div>
+<a-scene vr-mode-ui="enabled: true" inspector="url: https://aframe.io/releases/0.8.0/aframe-inspector.min.js"
+         fog="type: linear; color: #222;near:1;far:100">
+    <div class="player">
+    <div class="controls">
+        <div class="play_pause">
+            <div class="play_pause_icon play_pause-play"></div>
+        </div>
+        <div class="navigation">
+            <div class="navigation_prev">
+                <div class="navigation_prev_icon"></div>
+            </div>
+            <div class="navigation_next">
+                <div class="navigation_next_icon"></div>
+            </div>
+        </div>
+        <div class="progress_bar">
+            <div class="progress_bar_title">---</div>
+            <div class="progress_bar_stripe">
+                <div class="progress_bar_container">
+                    <div class="progress_bar_container_percentage"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="playlist"></div>
+</div>
+    <a-assets>
+        <a-asset-item id="snowflake" src="plate_mirror.obj"></a-asset-item>
+        <img src="flake2.png" id="flake_tile">
+    </a-assets>
+    <a-sky color="#000"></a-sky>
+    <a-light type="ambient" color="#444"></a-light>
+    <a-light type="point" color="#eee" position="0 0 0"></a-light>
+    <a-entity class="container" position="0 0 0" rotation="0 0 0">
+        <a-entity static-body class="sample" obj-model="obj: #snowflake;" scale=".2 .2 .2" position="0 0.3 -5"
+                  rotation="45 0 0" material="color:white;transparent:true;side:double">
+            <a-animation easing="linear" attribute="rotation" dur="10000" fill="forwards" to="45 360 0"
+                         repeat="indefinite"></a-animation>
+        </a-entity>
+        <a-entity id="cam" camera position="0 0 0" rotation="0 0 0">
+        </a-entity>
+    </a-entity>
+</a-scene>
+</body>
+<script>
+    let tile_context
+    let dot_context
+    let st_x
+    let st_y
+    let rand_interval
+
+    function make_one() {
+        let ini_x = (Math.random() * 100 - 50)
+        let ini_y = (Math.random() * 100 + 100)
+        let ini_z = (Math.random() * 100 - 50)
+        let t_txt = '<a-entity class="snow" position="' + ini_x + ' ' + ini_y + ' ' + ini_z + '" rotation="0 0 0" obj-model="obj: #snowflake;" scale=".2 .2 .2" material="side:double;transparent:true;src:#flake_tile"><a-animation attribute="position" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + ini_x + ' ' + (Math.random() * 40 - 200) + ' ' + ini_z + '"></a-animation><a-animation attribute="rotation" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + (Math.random() * 30) + ' ' + (Math.random() * 360) + ' 0"></a-animation></a-entity>'
+        $(t_txt).appendTo($('a-scene'))
+    }
+
+    function maintain() {
+        const num_snowflakes = 120
+        if ($('a-entity.snow').length < num_snowflakes) {
+            make_one()
+        } else if ($('a-entity.snow').eq(0).attr('position').y < -100) {
+            $('a-entity.snow').eq(0).remove()
+        }
+    }
+
+    function snow() {
+        rand_interval = setInterval(function () {
+            maintain()
+        }, 300)
+    }
+
+    $('.start').on('click', function () {
+        if ($('body').hasClass('snowing')) {
+            clearInterval(rand_interval)
+            $('a-entity.snow').remove()
+            $('body').removeClass('snowing')
+            let t_txt = '<a-entity class="sample" obj-model="obj: #snowflake;" scale=".2 .2 .2" position="0 0.3 -5" rotation="45 0 0" material="src:#flake_tile;transparent:true;side:double"><a-animation easing="linear" attribute="rotation" dur="10000" fill="forwards" to="45 360 0" repeat="indefinite"></a-animation></a-entity>'
+            $(t_txt).appendTo($('.container'))
+            $('#cam').removeAttr('look-controls')
+            $('#cam').attr('rotation', '0 0 0')
+            scene = document.querySelector('a-scene')
+            scene.exitVR();
+        } else {
+            $('body').addClass('snowing')
+            apply_img()
+            snow()
+            //window.addEventListener('DOMContentLoaded', initHandlers);
+            $('.sample').remove();
+            $('#cam').attr('look-controls', '')
+            $('.player').addEventListener('DOMContentLoaded', initHandlers)
+        }
+    })
+
+
+    var is_drawing = 0;
+    $('.wrapper').on('click', function (e) {
+        let t_x = e.pageX - $('#main_canvas').offset().left;
+        let t_y = e.pageY - $('#main_canvas').offset().top;
+        let o_x = e.pageX - $(this).offset().left
+        let o_y = e.pageY - $(this).offset().top
+
+        if (is_drawing == 0) {
+            st_x = e.pageX
+            st_y = e.pageY
+            tile_context.globalCompositeOperation = 'destination-out'
+            dot_context.globalCompositeOperation = 'source-over'
+            tile_context.beginPath()
+            dot_context.beginPath()
+            tile_context.moveTo(t_x, t_y)
+            dot_context.moveTo(o_x, o_y)
+            is_drawing = 1
+            $('<div class="first dot" style="left:' + o_x + 'px;top:' + o_y + 'px;"></div>').appendTo($(this))
+        } else if (is_drawing > 0) {
+            let dist = Math.sqrt((e.pageX - st_x) * (e.pageX - st_x) + (e.pageY - st_y) * (e.pageY - st_y))
+            if (dist < 15) {
+                tile_context.closePath()
+                tile_context.fill()
+                dot_context.closePath()
+                dot_context.clearRect(0, 0, $('#dot_canvas').width(), $('#dot_canvas').height())
+                is_drawing = 0;
+                $('.dot').remove()
+                apply_img()
+            } else {
+                tile_context.lineTo(t_x, t_y)
+                dot_context.lineTo(o_x, o_y)
+                dot_context.stroke()
+                is_drawing++
+                $('<div class="dot" style="left:' + o_x + 'px;top:' + o_y + 'px;"></div>').appendTo($(this))
+            }
+
+        }
+    })
+    $('.wrapper').on('mousemove', function (e) {
+        let dist = Math.sqrt((e.pageX - st_x) * (e.pageX - st_x) + (e.pageY - st_y) * (e.pageY - st_y))
+        if (dist < 15) {
+            $('.first').addClass('on')
+        } else {
+            $('.first').removeClass('on')
+        }
+    })
+
+
+    function apply_img() {
+        let dataUrl = tile.toDataURL()
+        $('a-assets > img').attr('src', dataUrl)
+        $('.sample').remove();
+        let t_txt = '<a-entity class="sample" obj-model="obj: #snowflake;" scale=".2 .2 .2" position="0 0.3 -5" rotation="45 0 0" material="src:#flake_tile;transparent:true;side:double"><a-animation easing="linear" attribute="rotation" dur="10000" fill="forwards" to="45 360 0" repeat="indefinite"></a-animation></a-entity>'
+        $(t_txt).appendTo($('.container'))
+    }
+
+    $('.preview').on('click', function () {
+        $('.wrapper').toggleClass('pre')
+        $(this).toggleClass('pre')
+        if ($('body').hasClass('sneak')) {
+            $('body').removeClass('sneak')
+        } else {
+            $('body').addClass('sneak')
+            apply_img()
+        }
+    })
+
+    function paper() {
+        $('#main_canvas').attr('height', $('.wrapper').height() * 0.7 * 2)
+        $('#main_canvas').attr('width', $('.wrapper').height() * 0.7 * 0.54838709677 * 2)
+        $('#dot_canvas').attr('width', $('.wrapper').width() * 2)
+        $('#dot_canvas').attr('height', $('.wrapper').height() * 2)
+        tile = document.getElementById("main_canvas");
+        tile.style.width = tile.width / 2 + 'px'
+        tile.style.height = tile.height / 2 + 'px'
+        tile.getContext('2d').scale(2, 2)
+        tile_context = tile.getContext("2d")
+        tile_context.fillStyle = "rgba(255,255,255,1)"
+        tile_context.fillRect(0, 0, $('#main_canvas').width(), $('#main_canvas').height())
+        $('.cover.right').css('top', ($('#main_canvas').offset().top - $('.wrapper').offset().top) + 'px')
+        $('.cover.left').css('top', ($('#main_canvas').offset().top - $('.wrapper').offset().top) + 'px')
+        $('.cover.right').css('left', (($('.wrapper').width() - $('#main_canvas').width()) / 2 + $('#main_canvas').width()) + 'px')
+        $('.cover.left').css('right', (($('.wrapper').width() - $('#main_canvas').width()) / 2 + $('#main_canvas').width()) + 'px')
+        dot = document.getElementById("dot_canvas");
+        dot.style.width = dot.width / 2 + 'px'
+        dot.style.height = dot.height / 2 + 'px'
+        dot.getContext('2d').scale(2, 2)
+        dot_context = dot.getContext("2d")
+        dot_context.fillStyle = "rgba(255,0,0,1)"
+        dot_context.strokeStyle = '#666'
+        dot_context.setLineDash([2, 4])
+        dot_context.lineWidth = 1
+    }
+
+    $(document).ready(function () {
+        paper()
+    })
+
+    $(window).resize(function () {
+        paper()
+    })
+
+    $('.refill').on('click', function () {
+        if (confirm('Are you sure you want to reset?')) {
+            tile_context.closePath()
+            tile_context.globalCompositeOperation = 'source-over'
+            tile_context.fillRect(0, 0, $('#main_canvas').width(), $('#main_canvas').height())
+            dot_context.clearRect(0, 0, $('#dot_canvas').width(), $('#dot_canvas').height())
+            dot_context.closePath()
+            is_drawing = 0
+            $('.dot').remove()
+            apply_img()
+        } else {
+
+        }
+
+    })
+
+    function initHandlers() {
+        let player = new Player(FILES);
+        player.init();
+
+        getByQuery('.player .controls .play_pause').addEventListener('click', player.play.bind(player));
+        getByQuery('.player .controls .navigation_prev').addEventListener('click', player.playPrev.bind(player));
+        getByQuery('.player .controls .navigation_next').addEventListener('click', player.playNext.bind(player));
+        getByQuery('.player .controls .progress_bar_stripe').addEventListener('click', player.pickNewProgress.bind(player));
+    }
+
+    function prepareFilePath(name) {
+        return `./files/${name}.mp3`;
+    }
+
+    function getByQuery(elem) {
+        return typeof elem === 'string' ? document.querySelector(elem) : elem;
+    }
+
+    function prettifyTime(time) {
+        let minutes = ~~((time % 3600) / 60);
+        let seconds = ~~(time % 60);
+
+        return `${parseInt(minutes / 10)}${minutes % 10}:${parseInt(seconds / 10)}${seconds % 10}`;
+    }
+
+    function createElem(config) {
+        let element = document.createElement(config.type);
+
+        config.class && (element.className = config.class);
+        config.id && (element.id = config.id);
+        config.textContent && (element.textContent = config.textContent);
+        config.handlers &&
+        Object.keys(config.handlers).length &&
+        Object.keys(config.handlers).forEach(key => {
+            element.addEventListener(key, config.handlers[key])
+        })
+        config.appendTo && config.appendTo.appendChild(element);
+
+        return element;
+    }
+</script>
+</html>

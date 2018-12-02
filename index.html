@@ -47,6 +47,23 @@
 </div>
 <a-scene vr-mode-ui="enabled: true" inspector="url: https://aframe.io/releases/0.8.0/aframe-inspector.min.js"
          fog="type: linear; color: #222;near:1;far:100">
+
+    <a-assets>
+        <a-asset-item id="snowflake" src="plate_mirror.obj"></a-asset-item>
+        <img src="flake2.png" id="flake_tile">
+    </a-assets>
+    <a-sky color="#000"></a-sky>
+    <a-light type="ambient" color="#444"></a-light>
+    <a-light type="point" color="#eee" position="0 0 0"></a-light>
+    <a-entity class="container" position="0 0 0" rotation="0 0 0">
+        <a-entity static-body class="sample" obj-model="obj: #snowflake;" scale=".2 .2 .2" position="0 0.3 -5"
+                  rotation="45 0 0" material="color:white;transparent:true;side:double">
+            <a-animation easing="linear" attribute="rotation" dur="10000" fill="forwards" to="45 360 0"
+                         repeat="indefinite"></a-animation>
+        </a-entity>
+        <a-entity id="cam" camera position="0 0 0" rotation="0 0 0">
+        </a-entity>
+    </a-entity>
     <div class="player">
     <div class="controls">
         <div class="play_pause">
@@ -71,22 +88,6 @@
     </div>
     <div class="playlist"></div>
 </div>
-    <a-assets>
-        <a-asset-item id="snowflake" src="plate_mirror.obj"></a-asset-item>
-        <img src="flake2.png" id="flake_tile">
-    </a-assets>
-    <a-sky color="#000"></a-sky>
-    <a-light type="ambient" color="#444"></a-light>
-    <a-light type="point" color="#eee" position="0 0 0"></a-light>
-    <a-entity class="container" position="0 0 0" rotation="0 0 0">
-        <a-entity static-body class="sample" obj-model="obj: #snowflake;" scale=".2 .2 .2" position="0 0.3 -5"
-                  rotation="45 0 0" material="color:white;transparent:true;side:double">
-            <a-animation easing="linear" attribute="rotation" dur="10000" fill="forwards" to="45 360 0"
-                         repeat="indefinite"></a-animation>
-        </a-entity>
-        <a-entity id="cam" camera position="0 0 0" rotation="0 0 0">
-        </a-entity>
-    </a-entity>
 </a-scene>
 </body>
 <script>

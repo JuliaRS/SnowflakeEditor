@@ -159,7 +159,7 @@
             $('.sample').remove();
             $('#cam').attr('look-controls', '')
             let script = "<script src=\".\/js\/player.js\"><\/script>";
-            $('body').append("<script src=\".\\js\\player.js\"><\/script>");
+            $('body').append(script);
         }
     })
 
@@ -281,46 +281,5 @@
         }
 
     })
-
-    function initHandlers() {
-        let player = new Player(FILES);
-        player.init();
-
-        getByQuery('.player .controls .play_pause').addEventListener('click', player.play.bind(player));
-        getByQuery('.player .controls .navigation_prev').addEventListener('click', player.playPrev.bind(player));
-        getByQuery('.player .controls .navigation_next').addEventListener('click', player.playNext.bind(player));
-        getByQuery('.player .controls .progress_bar_stripe').addEventListener('click', player.pickNewProgress.bind(player));
-    }
-
-    function prepareFilePath(name) {
-        return `./files/${name}.mp3`;
-    }
-
-    function getByQuery(elem) {
-        return typeof elem === 'string' ? document.querySelector(elem) : elem;
-    }
-
-    function prettifyTime(time) {
-        let minutes = ~~((time % 3600) / 60);
-        let seconds = ~~(time % 60);
-
-        return `${parseInt(minutes / 10)}${minutes % 10}:${parseInt(seconds / 10)}${seconds % 10}`;
-    }
-
-    function createElem(config) {
-        let element = document.createElement(config.type);
-
-        config.class && (element.className = config.class);
-        config.id && (element.id = config.id);
-        config.textContent && (element.textContent = config.textContent);
-        config.handlers &&
-        Object.keys(config.handlers).length &&
-        Object.keys(config.handlers).forEach(key => {
-            element.addEventListener(key, config.handlers[key])
-        })
-        config.appendTo && config.appendTo.appendChild(element);
-
-        return element;
-    }
 </script>
 </html>

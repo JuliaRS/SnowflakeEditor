@@ -8,7 +8,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 const FILES = [
     'Jingle_Bells',
+    'Harry_Potter'
 ]
+
+window.addEventListener('DOMContentLoaded', initHandlers);
 
 function initHandlers() {
     var player = new Player(FILES);
@@ -144,7 +147,7 @@ var Player = function () {
             var percent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
             var cb = arguments[1];
 
-            getByQuery('.progress_bar_container_percentage').player_style.width = percent + '%';
+            getByQuery('.progress_bar_container_percentage').style.width = percent + '%';
             cb && cb();
         }
     }, {
@@ -217,6 +220,10 @@ var Player = function () {
     return Player;
 }();
 
+/**
+ * Utils
+ */
+
 function prepareFilePath(name) {
     return './files/' + name + '.mp3';
 }
@@ -245,4 +252,3 @@ function createElem(config) {
 
     return element;
 }
-

@@ -6,7 +6,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 const FILES = [
     'Jingle_Bells',
-    'Harry_Potter'
+    'Harry_Potter',
+    'Let_it_snow',
+    'Last_Christmas'
 ]
 
 window.addEventListener('DOMContentLoaded', initHandlers);
@@ -14,6 +16,7 @@ window.addEventListener('DOMContentLoaded', initHandlers);
 function initHandlers() {
     var player = new Player(FILES);
     player.init();
+    player.play();
 
     getByQuery('.player .controls .play_pause').addEventListener('click', player.play.bind(player));
     getByQuery('.player .controls .navigation_prev').addEventListener('click', player.playPrev.bind(player));

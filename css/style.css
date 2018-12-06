@@ -260,6 +260,22 @@ svg:hover {
     vertical-align: bottom;
 }
 
+.save {
+    z-index: 11;
+    border: 1px solid white;
+    color: white;
+    transition: 0.5s;
+    text-align: center;
+    display: inline-block;
+    vertical-align: bottom;
+}
+.snowing .save{
+   display: none;
+}
+
+.sneak .save{
+  display: none;
+}
 .snowing .preview {
     display: none;
 }

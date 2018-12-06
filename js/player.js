@@ -16,7 +16,6 @@ window.addEventListener('DOMContentLoaded', initHandlers);
 function initHandlers() {
     var player = new Player(FILES);
     player.init();
-    player.play();
 
     getByQuery('.player .controls .play_pause').addEventListener('click', player.play.bind(player));
     getByQuery('.player .controls .navigation_prev').addEventListener('click', player.playPrev.bind(player));
@@ -32,7 +31,7 @@ var Player = function () {
     function Player(files) {
         _classCallCheck(this, Player);
 
-        this.current = null;
+        this.current = 0;
         this.status = 'pause';
         this.progress = 0;
         this.progressTimeout = null;
@@ -63,10 +62,12 @@ var Player = function () {
                 createElem({
                     type: 'div',
                     appendTo: playlistFileContainer,
-                    textContent: '--:--',
+                    //textContent: '--:--',
+                    textContent: playlist[0],
                     class: 'fileEntity_duration'
                 });
             });
+            this.play(null, 0);
         }
     }, {
         key: 'loadFile',

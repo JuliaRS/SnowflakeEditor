@@ -89,7 +89,7 @@
         </div>
     </div>
     <div class="playlist"></div>
-</div>*/
+</div>
 </body>
 <script>
     let tile_context
@@ -132,14 +132,13 @@
             $('#cam').attr('rotation', '0 0 0')
             scene = document.querySelector('a-scene')
             scene.exitVR();
+            $('.player').attr('opacity', '0');
         } else {
             $('body').addClass('snowing')
             apply_img()
             snow()
             $('.sample').remove();
             $('#cam').attr('look-controls', '')
-            let script = "<script src=\".\/js\/player.js\"><\/script>";
-            $('body').append(script);
         }
     })
 

@@ -38,7 +38,7 @@ body {
     right: 0;
     bottom: 0;
     top: 0;
-    background: #222;
+    background: #191970;
     display: flex;
     justify-content: center;
     align-items: flex-end;
@@ -152,7 +152,7 @@ body * {
 }
 
 .refill svg {
-    fill: #222;
+    fill: #191970;
     z-index: 10;
     position: absolute;
     width: 100%;
@@ -182,7 +182,7 @@ svg:hover {
 
 .cover {
     width: 70%;
-    background: #222;
+    background: #191970;
     height: 100%;
     position: absolute;
     left: 0;
@@ -301,7 +301,7 @@ svg:hover {
     left: 360px;
     top: 0;
     z-index: 2;
-    background: #222;
+    background: #191970;
 }
 
 .p_right {
@@ -343,7 +343,7 @@ svg:hover {
     top: 0;
     width: 500px;
     height: 500px;
-    box-shadow: 0 0 0 200px #222;
+    box-shadow: 0 0 0 200px #191970;
     z-index: 10;
     display: flex;
     align-items: center;
@@ -351,7 +351,7 @@ svg:hover {
     justify-content: center;
     transition: 0.2s;
     margin-left: -250px;
-    background: #222;
+    background: #191970;
 }
 
 .wrapper.pre {
@@ -394,7 +394,7 @@ svg:hover {
     overflow: hidden;
     z-index: 20;
     transition: transform 0.2s;
-    background: #222;
+    background: #191970;
     left: 0;
     right: 0;
     bottom: 80px;

@@ -45,41 +45,15 @@ var Player = function () {
     _createClass(Player, [{
         key: 'init',
         value: function init() {
-            var _this = this;
-
-            var playlist = getByQuery('.playlist');
-
-            this.files.forEach(function (f, i) {
-                var playlistFileContainer = createElem({
-                    type: 'div',
-                    appendTo: playlist,
-                    textContent: f.name,
-                    class: 'fileEntity',
-                    handlers: {
-                        click: _this.play.bind(_this, null, i)
-                    }
-                });
-                createElem({
-                    type: 'div',
-                    appendTo: playlistFileContainer,
-                    //textContent: '--:--',
-                    textContent: playlist[0],
-                    class: 'fileEntity_duration'
-                });
-            });
             this.play(null, 0);
         }
     }, {
         key: 'loadFile',
         value: function loadFile(i) {
             var f = this.files[i];
+            console.log(f);
 
             f.file = new Audio(prepareFilePath(f.name));
-
-            f.file.addEventListener('loadedmetadata', function () {
-                getByQuery('.playlist').children[i].children[0].textContent = prettifyTime(f.file.duration);
-            });
-
             f.file.addEventListener('ended', this.playNext.bind(this, null, i));
         }
     }, {
@@ -197,20 +171,7 @@ var Player = function () {
     }, {
         key: 'toggleStyles',
         value: function toggleStyles(action, prev, next) {
-            var prevNode = getByQuery('.playlist').children[prev];
-            var nextNode = getByQuery('.playlist').children[next];
             var playPause = getByQuery('.play_pause .play_pause_icon');
-
-            if (!next && next !== 0) {
-                if (!prevNode.classList.contains('fileEntity-active')) {
-                    prevNode.classList.add('fileEntity-active');
-                }
-                playPause.classList.toggle('play_pause-play');
-                playPause.classList.toggle('play_pause-pause');
-            } else {
-                prevNode.classList.toggle('fileEntity-active');
-                nextNode.classList.toggle('fileEntity-active');
-            }
 
             if (playPause.classList.contains('play_pause-play') && action == 'play' && prev != next) {
                 playPause.classList.toggle('play_pause-play');

@@ -112,14 +112,11 @@
             scene.exitVR();
             player.play();
             $('body').removeClass('player');
-            //$('.player').attr('opacity', '0');
         } else {
             $('body').addClass('snowing')
             apply_img()
             snow()
             initialize_plyer()
-            //player.play()
-            //window.addEventListener('DOMContentLoaded', initHandlers);
             $('.sample').remove();
             $('#cam').attr('look-controls', '')
         }

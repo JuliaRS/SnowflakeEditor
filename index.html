@@ -12,6 +12,7 @@
     <script src="js/aframe.js"></script>
     <script src="js/player.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 
 <body>
@@ -237,6 +238,18 @@
         dot_context.lineWidth = 1
     }
 
+    function get_image() {
+      html2canvas($('.wrapper').get(0)).then(function(canvas) {
+      let img = canvas.toDataURL()
+      let link = document.createElement('a');
+      link.href = img;
+      link.download = 'snowflake.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+     });
+    }
+
     $(document).ready(function () {
         paper()
     })
@@ -244,6 +257,8 @@
     $(window).resize(function () {
         paper()
     })
+    
+    $('.save').on('click', get_image)
 
     $('.refill').on('click', function () {
         if (confirm('Are you sure you want to reset?')) {

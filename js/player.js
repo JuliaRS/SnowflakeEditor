@@ -11,17 +11,6 @@ const FILES = [
     'Last_Christmas'
 ]
 
-window.addEventListener('DOMContentLoaded', initHandlers);
-
-function initHandlers() {
-    var player = new Player(FILES);
-    player.init();
-
-    getByQuery('.player .controls .play_pause').addEventListener('click', player.play.bind(player));
-    getByQuery('.player .controls .navigation_prev').addEventListener('click', player.playPrev.bind(player));
-    getByQuery('.player .controls .navigation_next').addEventListener('click', player.playNext.bind(player));
-    getByQuery('.player .controls .progress_bar_stripe').addEventListener('click', player.pickNewProgress.bind(player));
-}
 
 /**
  * Player class
@@ -45,7 +34,6 @@ var Player = function () {
     _createClass(Player, [{
         key: 'init',
         value: function init() {
-            this.play(null, 0);
         }
     }, {
         key: 'loadFile',
@@ -59,7 +47,7 @@ var Player = function () {
     }, {
         key: 'play',
         value: function play(e) {
-            var i = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.current || 0;
+            i = this.current !== null ? this.current : 0
 
             if (!this.files[i].file) {
                 this.loadFile(i);

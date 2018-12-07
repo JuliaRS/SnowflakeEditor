@@ -66,30 +66,6 @@
         </a-entity>
     </a-entity>
 </a-scene>
-<div class="player">
-    <div class="controls">
-        <div class="play_pause">
-            <div class="play_pause_icon play_pause-play"></div>
-        </div>
-        <div class="navigation">
-            <div class="navigation_prev">
-                <div class="navigation_prev_icon"></div>
-            </div>
-            <div class="navigation_next">
-                <div class="navigation_next_icon"></div>
-            </div>
-        </div>
-        <div class="progress_bar">
-            <div class="progress_bar_title">---</div>
-            <div class="progress_bar_stripe">
-                <div class="progress_bar_container">
-                    <div class="progress_bar_container_percentage"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
 </body>
 <script>
     let tile_context
@@ -97,6 +73,8 @@
     let st_x
     let st_y
     let rand_interval
+    let player = new Player(FILES); 
+        player.init();
 
     function make_one() {
         let ini_x = (Math.random() * 100 - 50)
@@ -132,11 +110,16 @@
             $('#cam').attr('rotation', '0 0 0')
             scene = document.querySelector('a-scene')
             scene.exitVR();
-            $('.player').attr('opacity', '0');
+            player.play();
+            $('body').removeClass('player');
+            //$('.player').attr('opacity', '0');
         } else {
             $('body').addClass('snowing')
             apply_img()
             snow()
+            initialize_plyer()
+            //player.play()
+            //window.addEventListener('DOMContentLoaded', initHandlers);
             $('.sample').remove();
             $('#cam').attr('look-controls', '')
         }
@@ -272,5 +255,15 @@
         }
 
     })
+   function initialize_plyer(){
+   let player_title = player.files[player.current].name
+   let player_txt = '<div class="player"><div class="controls"><div class="play_pause"><div class="play_pause_icon play_pause-play"></div></div><div class="navigation"><div class="navigation_prev"><div class="navigation_prev_icon"></div></div><div class="navigation_next"><div class="navigation_next_icon"></div></div></div><div class="progress_bar"><div class="progress_bar_title">'+ player_title +'</div><div class="progress_bar_stripe"><div class="progress_bar_container"><div class="progress_bar_container_percentage"></div></div></div></div></div></div>'
+            $(player_txt).appendTo('body')
+            getByQuery('.player .controls .play_pause').addEventListener('click', player.play.bind(player));
+            getByQuery('.player .controls .navigation_prev').addEventListener('click', player.playPrev.bind(player));
+            getByQuery('.player .controls .navigation_next').addEventListener('click', player.playNext.bind(player));
+            getByQuery('.player .controls .progress_bar_stripe').addEventListener('click', player.pickNewProgress.bind(player));
+            player.play()
+  }
 </script>
 </html>

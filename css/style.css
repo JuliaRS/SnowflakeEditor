@@ -252,8 +252,8 @@ svg:hover {
 
 .preview {
     z-index: 11;
-    border: 1px solid white;
-    color: white;
+    border: 1px solid #1AF1E7;
+    color: #1AF1E7;
     transition: 0.5s;
     text-align: center;
     display: inline-block;
@@ -262,8 +262,8 @@ svg:hover {
 
 .save {
     z-index: 11;
-    border: 1px solid white;
-    color: white;
+    border: 1px solid #1AF1E7;
+    color: #1AF1E7;
     transition: 0.5s;
     text-align: center;
     display: inline-block;
@@ -383,18 +383,18 @@ svg:hover {
 }
 
 .start {
-    background: white;
+    background: #1AF1E7;
     display: inline-block;
     text-transform: uppercase;
     z-index: 99999;
-    border: 1px solid white;
+    border: 1px solid #1AF1E7;
     transition: 0.2s;
     vertical-align: bottom;
 }
 
 .snowing .start {
     background: none;
-    color: white;
+    color: #1AF1E7;
 }
 
 .snowing .btns {

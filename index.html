@@ -32,7 +32,7 @@
         <p>Stop</p>
     </div>
     <div class="save">
-        <p>SAVE</p>
+        <p>   SAVE   </p>
     </div>
     <div class="refill">
         <p>Reset</p>
@@ -132,7 +132,7 @@
             $('#cam').attr('rotation', '0 0 0')
             scene = document.querySelector('a-scene')
             scene.exitVR();
-            player.play();
+            player.pause();
             getByQuery(".player").style.visibility = "hidden";
         } else {
             $('body').addClass('snowing')

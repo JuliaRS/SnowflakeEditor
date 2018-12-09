@@ -156,15 +156,27 @@ var Player = function () {
             this.stopProgress();
             this.runProgress(newPercent);
         }
+        },
+       {
+        key: 'pause',
+        value: function pause(){
+           if (this.status != 'pause'){
+               this.play();
+           }
+        }
     }, {
         key: 'toggleStyles',
         value: function toggleStyles(action, prev, next) {
             var playPause = getByQuery('.play_pause .play_pause_icon');
-
+            if (!next && next !== 0) {
+                playPause.classList.toggle('play_pause-play');
+               playPause.classList.toggle('play_pause-pause');
+            }
             if (playPause.classList.contains('play_pause-play') && action == 'play' && prev != next) {
                 playPause.classList.toggle('play_pause-play');
                 playPause.classList.toggle('play_pause-pause');
             }
+
         }
     }]);
 

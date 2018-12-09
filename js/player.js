@@ -45,9 +45,9 @@ var Player = function () {
             f.file.addEventListener('ended', this.playNext.bind(this, null, i));
         }
     }, {
-        key: 'play',
+                key: 'play',
         value: function play(e) {
-            i = this.current !== null ? this.current : 0
+            var i = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.current || 0;
 
             if (!this.files[i].file) {
                 this.loadFile(i);
@@ -77,7 +77,7 @@ var Player = function () {
             } else {
                 this.stopProgress();
             }
-        }
+     }
     }, {
         key: 'playNext',
         value: function playNext(e, currentIndex) {
@@ -188,18 +188,4 @@ function prettifyTime(time) {
     var seconds = ~~(time % 60);
 
     return '' + parseInt(minutes / 10) + minutes % 10 + ':' + parseInt(seconds / 10) + seconds % 10;
-}
-
-function createElem(config) {
-    var element = document.createElement(config.type);
-
-    config.class && (element.className = config.class);
-    config.id && (element.id = config.id);
-    config.textContent && (element.textContent = config.textContent);
-    config.handlers && Object.keys(config.handlers).length && Object.keys(config.handlers).forEach(function (key) {
-        element.addEventListener(key, config.handlers[key]);
-    });
-    config.appendTo && config.appendTo.appendChild(element);
-
-    return element;
 }

@@ -252,8 +252,8 @@ svg:hover {
 
 .preview {
     z-index: 11;
-    border: 1px solid white;
-    color: white;
+    border: 1px solid #1AF1E7;
+    color: #1AF1E7;
     transition: 0.5s;
     text-align: center;
     display: inline-block;
@@ -262,8 +262,8 @@ svg:hover {
 
 .save {
     z-index: 11;
-    border: 1px solid white;
-    color: white;
+    border: 1px solid #1AF1E7;
+    color: #1AF1E7;
     transition: 0.5s;
     text-align: center;
     display: inline-block;
@@ -383,18 +383,18 @@ svg:hover {
 }
 
 .start {
-    background: white;
+    background: #1AF1E7;
     display: inline-block;
     text-transform: uppercase;
     z-index: 99999;
-    border: 1px solid white;
+    border: 1px solid #1AF1E7;
     transition: 0.2s;
     vertical-align: bottom;
 }
 
 .snowing .start {
     background: none;
-    color: white;
+    color: #1AF1E7;
 }
 
 .snowing .btns {
@@ -472,7 +472,7 @@ svg:hover {
     height: 48px;
     margin-bottom: 15px;
     background-color: #fff;
-    box-shadow: 0 1px 2px #ccc;
+    box-shadow: #000;
     padding: 0 15px;
 }
 .play_pause {
@@ -590,7 +590,8 @@ svg:hover {
 }
 .playlist {
     background-color: #fff;
-    box-shadow: 0 1px 2px #ccc;
+    opacity: 0;
+    box-shadow: 0 1px 2px #fff;
 }
 .fileEntity {
     padding: 15px;

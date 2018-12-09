@@ -7,7 +7,7 @@
     <link rel="manifest" href="manifest.json"/>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#191970">
-    <link rel="icon" href="icon.png">
+    <link rel="icon" href="files/icon.png">
     <link rel="stylesheet" href="./css/style.css">
     <script src="js/aframe.js"></script>
     <script src="js/player.js"></script>
@@ -50,7 +50,7 @@
 <a-scene vr-mode-ui="enabled: true" inspector="url: https://aframe.io/releases/0.8.0/aframe-inspector.min.js"
          fog="type: linear; color: #191970;near:1;far:100">
     <a-assets>
-        <a-asset-item id="snowflake" src="plate_mirror.obj"></a-asset-item>
+        <a-asset-item id="snowflake" src="files/plate_mirror.obj"></a-asset-item>
         <img src="flake2.png" id="flake_tile">
     </a-assets>
     <a-sky color="#000"></a-sky>
@@ -88,8 +88,7 @@
             </div>
         </div>
     </div>
-    <div class="playlist"></div>
-</div>*/
+</div>
 </body>
 <script>
     let tile_context
@@ -97,6 +96,7 @@
     let st_x
     let st_y
     let rand_interval
+    let player = new Player(FILES);
 
     function make_one() {
         let ini_x = (Math.random() * 100 - 50)
@@ -132,14 +132,16 @@
             $('#cam').attr('rotation', '0 0 0')
             scene = document.querySelector('a-scene')
             scene.exitVR();
+            player.play();
+            getByQuery(".player").style.visibility = "hidden";
         } else {
             $('body').addClass('snowing')
+            getByQuery(".player").style.visibility = "visible";
+            player.play();
             apply_img()
             snow()
             $('.sample').remove();
             $('#cam').attr('look-controls', '')
-            let script = "<script src=\".\/js\/player.js\"><\/script>";
-            $('body').append(script);
         }
     })
 
@@ -252,14 +254,13 @@
 
     $(document).ready(function () {
         paper()
+        getByQuery(".player").style.visibility = "hidden";
     })
 
     $(window).resize(function () {
         paper()
     })
-    
     $('.save').on('click', get_image)
-
     $('.refill').on('click', function () {
         if (confirm('Are you sure you want to reset?')) {
             tile_context.closePath()
@@ -273,5 +274,12 @@
         }
 
     })
+   function initialize_player(){
+            getByQuery('.player .controls .play_pause').addEventListener('click', player.play.bind(player));
+            getByQuery('.player .controls .navigation_prev').addEventListener('click', player.playPrev.bind(player));
+            getByQuery('.player .controls .navigation_next').addEventListener('click', player.playNext.bind(player));
+            getByQuery('.player .controls .progress_bar_stripe').addEventListener('click', player.pickNewProgress.bind(player));
+  }
+  window.addEventListener('DOMContentLoaded', initialize_player);
 </script>
 </html>

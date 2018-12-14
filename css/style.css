@@ -447,11 +447,13 @@ svg:hover {
     top: 0;
     width: 600px;
     margin: 20px auto 20px auto;
+    background: #191970;
+    color: #1AF1E7;
 }
 .controls {
     height: 48px;
     margin-bottom: 15px;
-    background-color: #fff;
+    background-color: #191970;
     box-shadow: #000;
     padding: 0 15px;
 }
@@ -472,7 +474,7 @@ svg:hover {
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background-color: #577ca1;
+    background-color: #1AF1E7;
 }
 .play_pause-play {
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2228%22%20height%3D%2229%22%20viewBox%3D%220%200%2028%2029%22%3E%3Cg%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M11.8%2019.9C11.4%2020.2%2011%2020%2011%2019.5L11%208.5C11%208%2011.4%207.8%2011.8%208.1L19.5%2013.6C19.9%2013.8%2019.8%2014.2%2019.5%2014.4L11.8%2019.9Z%22%20fill%3D%22%23FFF%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
@@ -507,6 +509,7 @@ svg:hover {
     width: 9px;
     background-position: 50%;
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20width%3D%229%22%20height%3D%2210%22%20viewBox%3D%2240%209%209%2010%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M42%2013.05V9.5c0-.27-.2-.5-.5-.5h-1c-.27%200-.5.23-.5.5v9c0%20.27.2.5.5.5h1c.27%200%20.5-.23.5-.5v-3.55l6.15%203.9c.47.3.85.1.85-.45V9.6c0-.55-.38-.75-.85-.45L42%2013.05z%22%20fill%3D%22%235E80A7%22%20fill-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E");
+    
 }
 .navigation_prev:hover {
     cursor: pointer;
@@ -561,17 +564,12 @@ svg:hover {
 }
 .progress_bar_container {
     height: 100%;
-    background-color: #b8c7d7;
+    background-color: #fff;
 }
 .progress_bar_container_percentage {
     height: 100%;
     width: 0;
-    background-color: #577ca1;
-}
-.playlist {
-    background-color: #fff;
-    opacity: 0;
-    box-shadow: 0 1px 2px #fff;
+    background-color: #1AF1E7;
 }
 .fileEntity {
     padding: 15px;
@@ -587,3 +585,29 @@ svg:hover {
     background-color: #eee;
     transition: 0.3s all ease;
 }
+
+#slideout {
+  position: fixed;
+  top: 40px;
+  left: 0;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+}
+#slideout_inner {
+  position: fixed;
+  top: 40px;
+  left: -500px;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+}
+#slideout:hover {
+  left: 250px;
+}
+#slideout:hover #slideout_inner {
+  left: 0;
+}
+

@@ -66,6 +66,9 @@
         </a-entity>
     </a-entity>
 </a-scene>
+<div id="slideout">
+  <!--img src="player.png" alt="Audio" /-->
+	  <div id="slideout_inner">
 <div class="player">
     <div class="controls">
         <div class="play_pause">
@@ -89,6 +92,8 @@
         </div>
     </div>
 </div>
+	  </div>
+	</div>
 </body>
 <script>
     let tile_context
@@ -147,7 +152,10 @@
 
 
     var is_drawing = 0;
+    var timeoutId;
     $('.wrapper').on('click', function (e) {
+       if (!timeoutId)
+		timeoutId = setTimeout('clearTimeout(timeoutId);', 500);
         let t_x = e.pageX - $('#main_canvas').offset().left;
         let t_y = e.pageY - $('#main_canvas').offset().top;
         let o_x = e.pageX - $(this).offset().left
@@ -191,6 +199,12 @@
         } else {
             $('.first').removeClass('on')
         }
+    })
+    $('.wrapper').on('dblclick', function(e) {
+     is_drawing = 0;
+     clearTimeout(timeoutId);
+     dot_context.clearRect(0, 0, $('#dot_canvas').width(), $('#dot_canvas').height())
+     $('.dot').remove()
     })
 
 

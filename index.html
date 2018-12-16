@@ -8,11 +8,14 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#191970">
     <link rel="icon" href="files/icon.png">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
     <script src="js/aframe.js"></script>
     <script src="js/player.js"></script>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="js/history.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body>
@@ -34,17 +37,13 @@
     <div class="save">
         <p>   SAVE   </p>
     </div>
+   <div class="history">
+     <p class="prev"><span class="glyphicon glyphicon-chevron-left"></span></p>
+     <p class="next"><span class="glyphicon glyphicon-chevron-right"></span></p>
+   </div>
     <div class="refill">
         <p>Reset</p>
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="454.839px" height="454.839px" viewBox="0 0 454.839 454.839" style="enable-background:new 0 0 454.839 454.839;" xml:space="preserve">
-                <g>
-                    <path d="M404.908,283.853c0,94.282-76.71,170.986-170.986,170.986h-60.526c-10.03,0-18.158-8.127-18.158-18.157v-6.053
-        c0-10.031,8.127-18.158,18.158-18.158h60.526c70.917,0,128.618-57.701,128.618-128.618c0-70.917-57.701-128.618-128.618-128.618
-        H122.255l76.905,76.905c8.26,8.257,8.26,21.699,0,29.956c-8.015,8.009-21.964,7.997-29.961,0L56.137,149.031
-        c-4.001-4.001-6.206-9.321-6.206-14.981c0-5.656,2.205-10.979,6.206-14.978L169.205,6.002c7.997-8.003,21.958-8.003,29.956,0
-        c8.26,8.255,8.26,21.699,0,29.953l-76.905,76.911h111.666C328.198,112.866,404.908,189.573,404.908,283.853z" />
-                </g>
-            </svg>
+        <span class="glyphicon glyphicon-repeat">
     </div>
 </div>
 <a-scene vr-mode-ui="enabled: true" inspector="url: https://aframe.io/releases/0.8.0/aframe-inspector.min.js"
@@ -96,63 +95,65 @@
 	</div>
 </body>
 <script>
-    let tile_context
-    let dot_context
-    let st_x
-    let st_y
-    let rand_interval
+    let tile_context;
+    let dot_context;
+    let st_x;
+    let st_y;
+    let rand_interval;
     let player = new Player(FILES);
+    let operations = new OperationsHistory();
 
     function make_one() {
-        let ini_x = (Math.random() * 100 - 50)
-        let ini_y = (Math.random() * 100 + 100)
-        let ini_z = (Math.random() * 100 - 50)
-        let t_txt = '<a-entity class="snow" position="' + ini_x + ' ' + ini_y + ' ' + ini_z + '" rotation="0 0 0" obj-model="obj: #snowflake;" scale=".2 .2 .2" material="side:double;transparent:true;src:#flake_tile"><a-animation attribute="position" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + ini_x + ' ' + (Math.random() * 40 - 200) + ' ' + ini_z + '"></a-animation><a-animation attribute="rotation" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + (Math.random() * 30) + ' ' + (Math.random() * 360) + ' 0"></a-animation></a-entity>'
-        $(t_txt).appendTo($('a-scene'))
+        let ini_x = (Math.random() * 100 - 50);
+        let ini_y = (Math.random() * 100 + 100);
+        let ini_z = (Math.random() * 100 - 50);
+        let t_txt = '<a-entity class="snow" position="' + ini_x + ' ' + ini_y + ' ' + ini_z + '" rotation="0 0 0" obj-model="obj: #snowflake;" scale=".2 .2 .2" material="side:double;transparent:true;src:#flake_tile"><a-animation attribute="position" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + ini_x + ' ' + (Math.random() * 40 - 200) + ' ' + ini_z + '"></a-animation><a-animation attribute="rotation" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + (Math.random() * 30) + ' ' + (Math.random() * 360) + ' 0"></a-animation></a-entity>';
+        $(t_txt).appendTo($('a-scene'));
     }
 
     function maintain() {
-        const num_snowflakes = 120
+        const num_snowflakes = 120;
         if ($('a-entity.snow').length < num_snowflakes) {
-            make_one()
+            make_one();
         } else if ($('a-entity.snow').eq(0).attr('position').y < -100) {
-            $('a-entity.snow').eq(0).remove()
+            $('a-entity.snow').eq(0).remove();
         }
     }
 
     function snow() {
         rand_interval = setInterval(function () {
-            maintain()
-        }, 300)
+            maintain();
+        }, 300);
     }
 
     $('.start').on('click', function () {
         if ($('body').hasClass('snowing')) {
-            clearInterval(rand_interval)
-            $('a-entity.snow').remove()
-            $('body').removeClass('snowing')
-            let t_txt = '<a-entity class="sample" obj-model="obj: #snowflake;" scale=".2 .2 .2" position="0 0.3 -5" rotation="45 0 0" material="src:#flake_tile;transparent:true;side:double"><a-animation easing="linear" attribute="rotation" dur="10000" fill="forwards" to="45 360 0" repeat="indefinite"></a-animation></a-entity>'
-            $(t_txt).appendTo($('.container'))
-            $('#cam').removeAttr('look-controls')
-            $('#cam').attr('rotation', '0 0 0')
-            scene = document.querySelector('a-scene')
+            clearInterval(rand_interval);
+            $('a-entity.snow').remove();
+            $('body').removeClass('snowing');
+            let t_txt = '<a-entity class="sample" obj-model="obj: #snowflake;" scale=".2 .2 .2" position="0 0.3 -5" rotation="45 0 0" material="src:#flake_tile;transparent:true;side:double"><a-animation easing="linear" attribute="rotation" dur="10000" fill="forwards" to="45 360 0" repeat="indefinite"></a-animation></a-entity>';
+            $(t_txt).appendTo($('.container'));
+            $('#cam').removeAttr('look-controls');
+            $('#cam').attr('rotation', '0 0 0');
+            scene = document.querySelector('a-scene');
             scene.exitVR();
             player.pause();
             getByQuery(".player").style.visibility = "hidden";
         } else {
-            $('body').addClass('snowing')
+            $('body').addClass('snowing');
             getByQuery(".player").style.visibility = "visible";
             player.play();
-            apply_img()
-            snow()
+            let dataUrl = tile.toDataURL()
+            apply_img(dataUrl);
+            snow();
             $('.sample').remove();
             $('#cam').attr('look-controls', '')
         }
     })
 
 
-    var is_drawing = 0;
-    var timeoutId;
+    let is_drawing = 0;
+    let timeoutId;
     $('.wrapper').on('click', function (e) {
        if (!timeoutId)
 		timeoutId = setTimeout('clearTimeout(timeoutId);', 500);
@@ -162,6 +163,8 @@
         let o_y = e.pageY - $(this).offset().top
 
         if (is_drawing == 0) {
+            let dataUrl = tile.toDataURL()
+            operations.push(dataUrl.toString());
             st_x = e.pageX
             st_y = e.pageY
             tile_context.globalCompositeOperation = 'destination-out'
@@ -181,7 +184,8 @@
                 dot_context.clearRect(0, 0, $('#dot_canvas').width(), $('#dot_canvas').height())
                 is_drawing = 0;
                 $('.dot').remove()
-                apply_img()
+                let dataUrl = tile.toDataURL()
+                apply_img(dataUrl);
             } else {
                 tile_context.lineTo(t_x, t_y)
                 dot_context.lineTo(o_x, o_y)
@@ -208,8 +212,7 @@
     })
 
 
-    function apply_img() {
-        let dataUrl = tile.toDataURL()
+    function apply_img(dataUrl) {
         $('a-assets > img').attr('src', dataUrl)
         $('.sample').remove();
         let t_txt = '<a-entity class="sample" obj-model="obj: #snowflake;" scale=".2 .2 .2" position="0 0.3 -5" rotation="45 0 0" material="src:#flake_tile;transparent:true;side:double"><a-animation easing="linear" attribute="rotation" dur="10000" fill="forwards" to="45 360 0" repeat="indefinite"></a-animation></a-entity>'
@@ -223,9 +226,31 @@
             $('body').removeClass('sneak')
         } else {
             $('body').addClass('sneak')
-            apply_img()
+            let dataUrl = tile.toDataURL()
+            apply_img(dataUrl)
         }
     })
+
+    $('.next').on('click', function () {
+      next = operations.getNext();
+       var img = new Image();
+      img.onload = function(){
+      tile_context.globalCompositeOperation = 'source-over';
+      tile_context.drawImage(img, 0, 0,  $('#main_canvas').width(), $('#main_canvas').height()); // Or at whatever offset you like
+      };
+      img.src = next;
+      apply_img(next);
+    });
+    $('.prev').on('click', function () {
+      previous = operations.getPrev();
+      var img = new Image();
+      img.onload = function(){
+      tile_context.globalCompositeOperation = 'source-over';
+      tile_context.drawImage(img, 0, 0,  $('#main_canvas').width(), $('#main_canvas').height()); // Or at whatever offset you like
+      };
+      img.src = previous;
+      apply_img(previous);
+    });
 
     function paper() {
         $('#main_canvas').attr('height', $('.wrapper').height() * 0.7 * 2)
@@ -284,7 +309,8 @@
             dot_context.closePath()
             is_drawing = 0
             $('.dot').remove()
-            apply_img()
+            let dataUrl = tile.toDataURL()
+            apply_img(dataUrl)
         }
 
     })

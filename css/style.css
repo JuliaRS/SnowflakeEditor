@@ -44,6 +44,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-end;
+    font-size: 18px;
 }
 
 body.snowing {
@@ -103,6 +104,76 @@ body * {
     background: rgba(255, 255, 255, .1);
 }
 
+.btns .history .next{
+    position: absolute;
+    left: 50%;
+    bottom: 160px;
+    width: 44px;
+    height: 44px;
+    padding: 11px;
+    margin-left: 0px;
+    transition: .2s;
+    background: rgba(255,255,255,.1);
+}
+
+.btns .history .prev{
+    position: absolute;
+    left: 50%;
+    bottom: 160px;
+    width: 44px;
+    height: 44px;
+    padding: 11px;
+    margin-left: -50px;
+    transition: .2s;
+    background: rgba(255,255,255,.1);
+}
+
+.history p {
+    position: absolute;
+    bottom: -27px;
+    color: #1AF1E7;
+    padding: 7px;
+    width: 60px;
+    font-size: 12px;
+    margin-left: -30px;
+    left: 50%;
+    transition: 0.2s;
+}
+
+.history:hover p {
+    color: white;
+}
+
+.history:hover p {
+    opacity: 1;
+}
+
+.history span {
+    color: #1AF1E7;
+    z-index: 10;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 99vw;
+    left: 0px;
+    padding: 10px;
+    top: 0;
+    font-size: 24px;
+}
+.snowing .history {
+    opacity: 0;
+    pointer-events: none;
+}
+.sneak .history {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.history span:hover {
+    color: white;
+}
+
+
 .snowing .refill {
     opacity: 0;
     pointer-events: none;
@@ -111,7 +182,7 @@ body * {
 .refill p {
     position: absolute;
     bottom: -27px;
-    color: #383838;
+    color: #1AF1E7;
     padding: 7px;
     width: 60px;
     font-size: 12px;
@@ -128,17 +199,17 @@ body * {
     opacity: 1;
 }
 
-.refill svg {
-    fill: #191970;
+.refill span {
+    color: #1AF1E7;
     z-index: 10;
     position: absolute;
     width: 100%;
     height: 100%;
     border-radius: 99vw;
-    left: 0;
+    left: 0px;
     padding: 10px;
-    transition: 0.2s;
     top: 0;
+    font-size: 24px;
 }
 
 .sneak .refill {
@@ -146,8 +217,8 @@ body * {
     pointer-events: none;
 }
 
-svg:hover {
-    fill: white;
+.refill span:hover {
+    color: white;
 }
 
 #dot_canvas {

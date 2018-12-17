@@ -1,6 +1,6 @@
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+const _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+const _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -16,7 +16,7 @@ const FILES = [
  * Player class
  */
 
-var Player = function () {
+let Player = function () {
     function Player(files) {
         _classCallCheck(this, Player);
 
@@ -38,7 +38,7 @@ var Player = function () {
     }, {
         key: 'loadFile',
         value: function loadFile(i) {
-            var f = this.files[i];
+            let f = this.files[i];
             console.log(f);
 
             f.file = new Audio(prepareFilePath(f.name));
@@ -47,13 +47,13 @@ var Player = function () {
     }, {
                 key: 'play',
         value: function play(e) {
-            var i = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.current || 0;
+            let i = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.current || 0;
 
             if (!this.files[i].file) {
                 this.loadFile(i);
             }
 
-            var action = 'play';
+            let action = 'play';
 
             if (this.current == i) {
                 action = this.status === 'pause' ? 'play' : 'pause';
@@ -81,7 +81,7 @@ var Player = function () {
     }, {
         key: 'playNext',
         value: function playNext(e, currentIndex) {
-            var nextIndex = (currentIndex ? currentIndex : this.current) + 1;
+            let nextIndex = (currentIndex ? currentIndex : this.current) + 1;
 
             if (!this.files[nextIndex]) {
                 nextIndex = 0;
@@ -92,7 +92,7 @@ var Player = function () {
     }, {
         key: 'playPrev',
         value: function playPrev(e, currentIndex) {
-            var prevIndex = (currentIndex ? currentIndex : this.current) - 1;
+            let prevIndex = (currentIndex ? currentIndex : this.current) - 1;
 
             if (!this.files[prevIndex]) {
                 prevIndex = this.files.length - 1;
@@ -108,8 +108,8 @@ var Player = function () {
     }, {
         key: 'setProgress',
         value: function setProgress() {
-            var percent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-            var cb = arguments[1];
+            let percent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+            let cb = arguments[1];
 
             getByQuery('.progress_bar_container_percentage').style.width = percent + '%';
             cb && cb();
@@ -117,19 +117,19 @@ var Player = function () {
     }, {
         key: 'countProgress',
         value: function countProgress() {
-            var file = this.files[this.current].file;
+            let file = this.files[this.current].file;
 
             return file.currentTime * 100 / file.duration || 0;
         }
     }, {
         key: 'runProgress',
         value: function runProgress() {
-            var _this2 = this;
+            let _this2 = this;
 
-            var percent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+            let percent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
-            var percentage = percent || this.countProgress();
-            var cb = percent ? function () {
+            let percentage = percent || this.countProgress();
+            let cb = percent ? function () {
                 _this2.files[_this2.current].file.currentTime = percentage * _this2.files[_this2.current].file.duration / 100;
             } : null;
 
@@ -149,9 +149,9 @@ var Player = function () {
                 this.play();
             }
 
-            var coords = e.target.getBoundingClientRect().left;
-            var progressBar = getByQuery('.progress_bar_stripe');
-            var newPercent = (e.clientX - coords) / progressBar.offsetWidth * 100;
+            let coords = e.target.getBoundingClientRect().left;
+            let progressBar = getByQuery('.progress_bar_stripe');
+            let newPercent = (e.clientX - coords) / progressBar.offsetWidth * 100;
 
             this.stopProgress();
             this.runProgress(newPercent);
@@ -167,7 +167,7 @@ var Player = function () {
     }, {
         key: 'toggleStyles',
         value: function toggleStyles(action, prev, next) {
-            var playPause = getByQuery('.play_pause .play_pause_icon');
+            let playPause = getByQuery('.play_pause .play_pause_icon');
             if (!next && next !== 0) {
                 playPause.classList.toggle('play_pause-play');
                playPause.classList.toggle('play_pause-pause');

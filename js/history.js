@@ -2,21 +2,19 @@ class OperationsHistory{
    constructor(){
      this.currentIndex = 0;
      this.operations = [];
+     this.current = null;
    }
    
    push(operation){
       if (this.currentIndex != this.operations.length - 1){
+          this.current = this.operations[this.currentIndex + 1]
           let diff = this.operations.length - this.currentIndex;
           for (let i = 0; i < diff; i++){
             this.operations.pop();
           }
       }
-      console.log(this.currentIndex);
-      console.log(this.operations)
       this.operations.push(operation);
       this.currentIndex++;
-      console.log(this.currentIndex);
-      console.log(this.operations)
       if (this.operations.length >= 10){
           this.operations.shift();
           this.currentIndex--;
@@ -25,8 +23,11 @@ class OperationsHistory{
    }
    
    getNext(){
-      this.currentIndex = this.currentIndex + 1 <= this.operations.length - 1 ? this.currentIndex + 1: 0;
-      console.log(this.currentIndex)
+      this.currentIndex = this.currentIndex + 1
+      if (this.currentIndex >= this.operations.length - 1){
+        this.currentIndex = this.operations.length - 1;  
+        return this.current; 
+      }
       return this.operations[this.currentIndex];
    }
 
@@ -35,6 +36,12 @@ class OperationsHistory{
        return this.operations[this.currentIndex];
    }
 
-
-
+   reset(){
+     this.current = null;
+    this.operations = [];
+   }
+   
+   length(){
+     return this.operations.length;
+   }
 }

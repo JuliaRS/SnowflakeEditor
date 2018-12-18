@@ -38,8 +38,8 @@
         <p>   SAVE   </p>
     </div>
    <div class="history">
-     <p class="prev"><span class="glyphicon glyphicon-chevron-left"></span></p>
-     <p class="next"><span class="glyphicon glyphicon-chevron-right"></span></p>
+     <p class="prev disable"><span class="glyphicon glyphicon-chevron-left"></span></p>
+     <p class="next disable"><span class="glyphicon glyphicon-chevron-right"></span></p>
    </div>
     <div class="refill">
         <p>Reset</p>
@@ -186,6 +186,8 @@
                 $('.dot').remove()
                 let dataUrl = tile.toDataURL()
                 apply_img(dataUrl);
+                operations.current = dataUrl;
+                $('.prev').removeClass('disable');
             } else {
                 tile_context.lineTo(t_x, t_y)
                 dot_context.lineTo(o_x, o_y)
@@ -233,23 +235,29 @@
 
     $('.next').on('click', function () {
       next = operations.getNext();
+      if (next !== null) {
        var img = new Image();
       img.onload = function(){
-      tile_context.globalCompositeOperation = 'source-over';
+      tile_context.globalCompositeOperation = 'copy';
       tile_context.drawImage(img, 0, 0,  $('#main_canvas').width(), $('#main_canvas').height()); // Or at whatever offset you like
       };
       img.src = next;
       apply_img(next);
+      if (operations.currentIndex == operations.length() - 1)
+         $('.next').addClass('disable');
+      }
+
     });
     $('.prev').on('click', function () {
       previous = operations.getPrev();
       var img = new Image();
       img.onload = function(){
-      tile_context.globalCompositeOperation = 'source-over';
+      tile_context.globalCompositeOperation = 'copy';
       tile_context.drawImage(img, 0, 0,  $('#main_canvas').width(), $('#main_canvas').height()); // Or at whatever offset you like
       };
       img.src = previous;
       apply_img(previous);
+      $('.next').removeClass('disable');
     });
 
     function paper() {
@@ -311,6 +319,9 @@
             $('.dot').remove()
             let dataUrl = tile.toDataURL()
             apply_img(dataUrl)
+            operations.reset();
+            $('.next').addClass('disable');
+            $('.prev').addClass('disable');
         }
 
     })

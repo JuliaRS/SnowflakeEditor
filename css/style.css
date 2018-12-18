@@ -128,6 +128,13 @@ body * {
     background: rgba(255,255,255,.1);
 }
 
+.history .disable span{
+   color: #BEB9B9
+}
+
+.history .disable span:hower{
+   color: #BEB9B9
+}
 .history p {
     position: absolute;
     bottom: -27px;

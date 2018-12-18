@@ -25,8 +25,8 @@ class OperationsHistory{
    getNext(){
       this.currentIndex = this.currentIndex + 1
       if (this.currentIndex >= this.operations.length - 1){
-        this.currentIndex = this.operations.length - 1;  
-        return this.current; 
+        this.currentIndex = this.operations.length - 1; 
+        return this.current;
       }
       return this.operations[this.currentIndex];
    }
@@ -40,7 +40,7 @@ class OperationsHistory{
      this.current = null;
     this.operations = [];
    }
-   
+
    length(){
      return this.operations.length;
    }

@@ -258,6 +258,9 @@
       img.src = previous;
       apply_img(previous);
       $('.next').removeClass('disable');
+      if (operations.currentIndex == 0){
+         $('.prev').addClass('disable');
+      }
     });
 
     function paper() {

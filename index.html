@@ -35,7 +35,7 @@
         <p>Stop</p>
     </div>
     <div class="save">
-        <p>   SAVE   </p>
+        <p>SAVE AS</p>
     </div>
    <div class="history">
      <p class="prev disable"><span class="glyphicon glyphicon-chevron-left"></span></p>
@@ -66,7 +66,6 @@
     </a-entity>
 </a-scene>
 <div id="slideout">
-  <!--img src="player.png" alt="Audio" /-->
 	  <div id="slideout_inner">
 <div class="player">
     <div class="controls">
@@ -95,130 +94,156 @@
 	</div>
 </body>
 <script>
-    let tile_context;
-    let dot_context;
-    let st_x;
-    let st_y;
-    let rand_interval;
+    let tileContext;
+    let dotContext;
+    let startX;
+    let startY;
+    let randInterval;
     let player = new Player(FILES);
     let operations = new OperationsHistory();
+    const sampleText = '<a-entity class="sample" obj-model="obj: #snowflake;" scale=".2 .2 .2" position="0 0.3 -5" rotation="45 0 0" material="src:#flake_tile;transparent:true;side:double"><a-animation easing="linear" attribute="rotation" dur="10000" fill="forwards" to="45 360 0" repeat="indefinite"></a-animation></a-entity>';
 
-    function make_one() {
-        let ini_x = (Math.random() * 100 - 50);
-        let ini_y = (Math.random() * 100 + 100);
-        let ini_z = (Math.random() * 100 - 50);
-        let t_txt = '<a-entity class="snow" position="' + ini_x + ' ' + ini_y + ' ' + ini_z + '" rotation="0 0 0" obj-model="obj: #snowflake;" scale=".2 .2 .2" material="side:double;transparent:true;src:#flake_tile"><a-animation attribute="position" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + ini_x + ' ' + (Math.random() * 40 - 200) + ' ' + ini_z + '"></a-animation><a-animation attribute="rotation" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + (Math.random() * 30) + ' ' + (Math.random() * 360) + ' 0"></a-animation></a-entity>';
-        $(t_txt).appendTo($('a-scene'));
+    function makeOne() {
+        let initX = (Math.random() * 100 - 50);
+        let initY = (Math.random() * 100 + 100);
+        let initZ = (Math.random() * 100 - 50);
+        let tileText = '<a-entity class="snow" position="' + initX + ' ' + initY + ' ' + initZ + '" rotation="0 0 0" obj-model="obj: #snowflake;" scale=".2 .2 .2" material="side:double;transparent:true;src:#flake_tile"><a-animation attribute="position" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + initX + ' ' + (Math.random() * 40 - 200) + ' ' + initZ + '"></a-animation><a-animation attribute="rotation" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + (Math.random() * 30) + ' ' + (Math.random() * 360) + ' 0"></a-animation></a-entity>';
+        $(tileText).appendTo($('a-scene'));
     }
 
     function maintain() {
-        const num_snowflakes = 120;
-        if ($('a-entity.snow').length < num_snowflakes) {
-            make_one();
+        const numSnowflakes = 120;
+        if ($('a-entity.snow').length < numSnowflakes) {
+            makeOne();
         } else if ($('a-entity.snow').eq(0).attr('position').y < -100) {
             $('a-entity.snow').eq(0).remove();
         }
     }
 
     function snow() {
-        rand_interval = setInterval(function () {
+        randInterval = setInterval(function () {
             maintain();
         }, 300);
     }
 
-    $('.start').on('click', function () {
-        if ($('body').hasClass('snowing')) {
-            clearInterval(rand_interval);
+    function backToPreview(){
+      clearInterval(randInterval);
             $('a-entity.snow').remove();
             $('body').removeClass('snowing');
-            let t_txt = '<a-entity class="sample" obj-model="obj: #snowflake;" scale=".2 .2 .2" position="0 0.3 -5" rotation="45 0 0" material="src:#flake_tile;transparent:true;side:double"><a-animation easing="linear" attribute="rotation" dur="10000" fill="forwards" to="45 360 0" repeat="indefinite"></a-animation></a-entity>';
-            $(t_txt).appendTo($('.container'));
+            $(sampleText).appendTo($('.container'));
             $('#cam').removeAttr('look-controls');
             $('#cam').attr('rotation', '0 0 0');
             scene = document.querySelector('a-scene');
             scene.exitVR();
+   }
+
+   function letItSnow(){
+     $('body').addClass('snowing');
+     let dataUrl = tile.toDataURL()
+     applyImg(dataUrl);
+     snow();
+     $('.sample').remove();
+     $('#cam').attr('look-controls', '')
+   }
+
+    $('.start').on('click', function () {
+        if ($('body').hasClass('snowing')) {    
+            backToPreview();
             player.pause();
             getByQuery(".player").style.visibility = "hidden";
         } else {
-            $('body').addClass('snowing');
             getByQuery(".player").style.visibility = "visible";
             player.play();
-            let dataUrl = tile.toDataURL()
-            apply_img(dataUrl);
-            snow();
-            $('.sample').remove();
-            $('#cam').attr('look-controls', '')
+            letItSnow();
         }
     })
 
+   function createDot(className, x, y){
+     return '<div class="' + className + '" style="left:' + x + 'px;top:' + y + 'px;"></div>';  
 
-    let is_drawing = 0;
+   } 
+   function makeFirstDot(tileX, tileY, offsetX, offsetY){
+      let dataUrl = tile.toDataURL()
+      operations.push(dataUrl.toString());
+      tileContext.globalCompositeOperation = 'destination-out';
+      dotContext.globalCompositeOperation = 'source-over';
+      tileContext.beginPath();
+      dotContext.beginPath();
+      tileContext.moveTo(tileX, tileY);
+      dotContext.moveTo(offsetX, offsetY);
+      isDrawing = 1;
+      return createDot('first dot', offsetX, offsetY);
+   }
+
+   function continueDrawing(tileX, tileY, offsetX, offsetY){
+     tileContext.lineTo(tileX, tileY);
+     dotContext.lineTo(offsetX, offsetY);
+     dotContext.stroke();
+     isDrawing++;
+     return createDot('dot', offsetX, offsetY);
+   }
+
+   function endDrawing(){
+      tileContext.closePath();
+      tileContext.fill();
+      dotContext.closePath();
+      dotContext.clearRect(0, 0, $('#dot_canvas').width(), $('#dot_canvas').height());
+      isDrawing = 0;
+      $('.dot').remove();
+   }
+
+
+    let isDrawing = 0;
     let timeoutId;
     $('.wrapper').on('click', function (e) {
-       if (!timeoutId)
-		timeoutId = setTimeout('clearTimeout(timeoutId);', 500);
-        let t_x = e.pageX - $('#main_canvas').offset().left;
-        let t_y = e.pageY - $('#main_canvas').offset().top;
-        let o_x = e.pageX - $(this).offset().left
-        let o_y = e.pageY - $(this).offset().top
-
-        if (is_drawing == 0) {
-            let dataUrl = tile.toDataURL()
-            operations.push(dataUrl.toString());
-            st_x = e.pageX
-            st_y = e.pageY
-            tile_context.globalCompositeOperation = 'destination-out'
-            dot_context.globalCompositeOperation = 'source-over'
-            tile_context.beginPath()
-            dot_context.beginPath()
-            tile_context.moveTo(t_x, t_y)
-            dot_context.moveTo(o_x, o_y)
-            is_drawing = 1
-            $('<div class="first dot" style="left:' + o_x + 'px;top:' + o_y + 'px;"></div>').appendTo($(this))
-        } else if (is_drawing > 0) {
-            let dist = Math.sqrt((e.pageX - st_x) * (e.pageX - st_x) + (e.pageY - st_y) * (e.pageY - st_y))
-            if (dist < 15) {
-                tile_context.closePath()
-                tile_context.fill()
-                dot_context.closePath()
-                dot_context.clearRect(0, 0, $('#dot_canvas').width(), $('#dot_canvas').height())
-                is_drawing = 0;
-                $('.dot').remove()
-                let dataUrl = tile.toDataURL()
-                apply_img(dataUrl);
-                operations.current = dataUrl;
-                $('.prev').removeClass('disable');
-            } else {
-                tile_context.lineTo(t_x, t_y)
-                dot_context.lineTo(o_x, o_y)
-                dot_context.stroke()
-                is_drawing++
-                $('<div class="dot" style="left:' + o_x + 'px;top:' + o_y + 'px;"></div>').appendTo($(this))
-            }
-
+        if (!timeoutId){
+          timeoutId = setTimeout('clearTimeout(timeoutId);', 500);
         }
+        let tileX = e.pageX - $('#main_canvas').offset().left;
+        let tileY = e.pageY - $('#main_canvas').offset().top;
+        let offsetX = e.pageX - $(this).offset().left;
+        let offsetY = e.pageY - $(this).offset().top;
+
+        if (isDrawing == 0) {     
+           startX = e.pageX;
+           startY = e.pageY;
+           let dotText = makeFirstDot(tileX, tileY, offsetX, offsetY);
+           $(dotText).appendTo($(this));
+           return;
+        } 
+        let dist = Math.sqrt((e.pageX - startX) * (e.pageX - startX) + (e.pageY - startY) * (e.pageY - startY));
+        if (dist < 15) {
+            endDrawing();
+            let dataUrl = tile.toDataURL()
+            applyImg(dataUrl);
+            operations.current = dataUrl;
+            $('.prev').removeClass('disable');
+        } else {
+             
+            $(continueDrawing(tileX, tileY, offsetX, offsetY)).appendTo($(this));
+       }
+
     })
     $('.wrapper').on('mousemove', function (e) {
-        let dist = Math.sqrt((e.pageX - st_x) * (e.pageX - st_x) + (e.pageY - st_y) * (e.pageY - st_y))
+        let dist = Math.sqrt((e.pageX - startX) * (e.pageX - startX) + (e.pageY - startY) * (e.pageY - startY));
         if (dist < 15) {
-            $('.first').addClass('on')
+            $('.first').addClass('on');
         } else {
-            $('.first').removeClass('on')
+            $('.first').removeClass('on');
         }
     })
     $('.wrapper').on('dblclick', function(e) {
      is_drawing = 0;
      clearTimeout(timeoutId);
-     dot_context.clearRect(0, 0, $('#dot_canvas').width(), $('#dot_canvas').height())
-     $('.dot').remove()
+     dotContext.clearRect(0, 0, $('#dot_canvas').width(), $('#dot_canvas').height());
+     $('.dot').remove();
     })
 
 
-    function apply_img(dataUrl) {
-        $('a-assets > img').attr('src', dataUrl)
+    function applyImg(dataUrl) {
+        $('a-assets > img').attr('src', dataUrl);
         $('.sample').remove();
-        let t_txt = '<a-entity class="sample" obj-model="obj: #snowflake;" scale=".2 .2 .2" position="0 0.3 -5" rotation="45 0 0" material="src:#flake_tile;transparent:true;side:double"><a-animation easing="linear" attribute="rotation" dur="10000" fill="forwards" to="45 360 0" repeat="indefinite"></a-animation></a-entity>'
-        $(t_txt).appendTo($('.container'))
+        $(sampleText).appendTo($('.container'))
     }
 
     $('.preview').on('click', function () {
@@ -229,34 +254,34 @@
         } else {
             $('body').addClass('sneak')
             let dataUrl = tile.toDataURL()
-            apply_img(dataUrl)
+            applyImg(dataUrl)
         }
     })
 
     $('.next').on('click', function () {
-      next = operations.getNext();
+      let next = operations.getNext();
       if (next !== null) {
-       var img = new Image();
-      img.onload = function(){
-      tile_context.globalCompositeOperation = 'copy';
-      tile_context.drawImage(img, 0, 0,  $('#main_canvas').width(), $('#main_canvas').height()); // Or at whatever offset you like
+         let img = new Image();
+         img.onload = function(){
+         tileContext.globalCompositeOperation = 'copy';
+         tileContext.drawImage(img, 0, 0,  $('#main_canvas').width(), $('#main_canvas').height());
       };
       img.src = next;
-      apply_img(next);
+      applyImg(next);
       if (operations.currentIndex == operations.length() - 1)
          $('.next').addClass('disable');
       }
+    })
 
-    });
     $('.prev').on('click', function () {
-      previous = operations.getPrev();
-      var img = new Image();
+      let previous = operations.getPrev();
+      let img = new Image();
       img.onload = function(){
-      tile_context.globalCompositeOperation = 'copy';
-      tile_context.drawImage(img, 0, 0,  $('#main_canvas').width(), $('#main_canvas').height()); // Or at whatever offset you like
+         tileContext.globalCompositeOperation = 'copy';
+         tileContext.drawImage(img, 0, 0,  $('#main_canvas').width(), $('#main_canvas').height());
       };
       img.src = previous;
-      apply_img(previous);
+      applyImg(previous);
       $('.next').removeClass('disable');
       if (operations.currentIndex == 0){
          $('.prev').addClass('disable');
@@ -269,30 +294,30 @@
         $('#dot_canvas').attr('width', $('.wrapper').width() * 2)
         $('#dot_canvas').attr('height', $('.wrapper').height() * 2)
         tile = document.getElementById("main_canvas");
-        tile.style.width = tile.width / 2 + 'px'
-        tile.style.height = tile.height / 2 + 'px'
-        tile.getContext('2d').scale(2, 2)
-        tile_context = tile.getContext("2d")
-        tile_context.fillStyle = "rgba(255,255,255,1)"
-        tile_context.fillRect(0, 0, $('#main_canvas').width(), $('#main_canvas').height())
-        $('.cover.right').css('top', ($('#main_canvas').offset().top - $('.wrapper').offset().top) + 'px')
-        $('.cover.left').css('top', ($('#main_canvas').offset().top - $('.wrapper').offset().top) + 'px')
-        $('.cover.right').css('left', (($('.wrapper').width() - $('#main_canvas').width()) / 2 + $('#main_canvas').width()) + 'px')
-        $('.cover.left').css('right', (($('.wrapper').width() - $('#main_canvas').width()) / 2 + $('#main_canvas').width()) + 'px')
+        tile.style.width = tile.width / 2 + 'px';
+        tile.style.height = tile.height / 2 + 'px';
+        tile.getContext('2d').scale(2, 2);
+        tileContext = tile.getContext("2d");
+        tileContext.fillStyle = "rgba(255,255,255,1)";
+        tileContext.fillRect(0, 0, $('#main_canvas').width(), $('#main_canvas').height());
+        $('.cover.right').css('top', ($('#main_canvas').offset().top - $('.wrapper').offset().top) + 'px');
+        $('.cover.left').css('top', ($('#main_canvas').offset().top - $('.wrapper').offset().top) + 'px');
+        $('.cover.right').css('left', (($('.wrapper').width() - $('#main_canvas').width()) / 2 + $('#main_canvas').width()) + 'px');
+        $('.cover.left').css('right', (($('.wrapper').width() - $('#main_canvas').width()) / 2 + $('#main_canvas').width()) + 'px');
         dot = document.getElementById("dot_canvas");
-        dot.style.width = dot.width / 2 + 'px'
-        dot.style.height = dot.height / 2 + 'px'
-        dot.getContext('2d').scale(2, 2)
-        dot_context = dot.getContext("2d")
-        dot_context.fillStyle = "rgba(255,0,0,1)"
-        dot_context.strokeStyle = '#666'
-        dot_context.setLineDash([2, 4])
-        dot_context.lineWidth = 1
+        dot.style.width = dot.width / 2 + 'px';
+        dot.style.height = dot.height / 2 + 'px';
+        dot.getContext('2d').scale(2, 2);
+        dotContext = dot.getContext("2d");
+        dotContext.fillStyle = "rgba(255,0,0,1)";
+        dotContext.strokeStyle = '#666';
+        dotContext.setLineDash([2, 4]);
+        dotContext.lineWidth = 1;
     }
 
-    function get_image() {
+    function getImage() {
       html2canvas($('.wrapper').get(0)).then(function(canvas) {
-      let img = canvas.toDataURL()
+      let img = canvas.toDataURL();
       let link = document.createElement('a');
       link.href = img;
       link.download = 'snowflake.png';
@@ -308,32 +333,32 @@
     })
 
     $(window).resize(function () {
-        paper()
+        paper();
     })
-    $('.save').on('click', get_image)
+    $('.save').on('click', getImage)
     $('.refill').on('click', function () {
         if (confirm('Are you sure you want to reset?')) {
-            tile_context.closePath()
-            tile_context.globalCompositeOperation = 'source-over'
-            tile_context.fillRect(0, 0, $('#main_canvas').width(), $('#main_canvas').height())
-            dot_context.clearRect(0, 0, $('#dot_canvas').width(), $('#dot_canvas').height())
-            dot_context.closePath()
-            is_drawing = 0
+            tileContext.closePath();
+            tileContext.globalCompositeOperation = 'source-over';
+            tileContext.fillRect(0, 0, $('#main_canvas').width(), $('#main_canvas').height());
+            dotContext.clearRect(0, 0, $('#dot_canvas').width(), $('#dot_canvas').height());
+            dotContext.closePath()
+            isDrawing = 0
             $('.dot').remove()
             let dataUrl = tile.toDataURL()
-            apply_img(dataUrl)
+            applyImg(dataUrl)
             operations.reset();
             $('.next').addClass('disable');
             $('.prev').addClass('disable');
         }
-
     })
-   function initialize_player(){
-            getByQuery('.player .controls .play_pause').addEventListener('click', player.play.bind(player));
-            getByQuery('.player .controls .navigation_prev').addEventListener('click', player.playPrev.bind(player));
-            getByQuery('.player .controls .navigation_next').addEventListener('click', player.playNext.bind(player));
-            getByQuery('.player .controls .progress_bar_stripe').addEventListener('click', player.pickNewProgress.bind(player));
+
+   function initializePlayer(){
+     getByQuery('.player .controls .play_pause').addEventListener('click', player.play.bind(player));
+     getByQuery('.player .controls .navigation_prev').addEventListener('click', player.playPrev.bind(player));
+     getByQuery('.player .controls .navigation_next').addEventListener('click', player.playNext.bind(player));
+     getByQuery('.player .controls .progress_bar_stripe').addEventListener('click', player.pickNewProgress.bind(player));
   }
-  window.addEventListener('DOMContentLoaded', initialize_player);
+  window.addEventListener('DOMContentLoaded', initializePlayer);
 </script>
 </html>

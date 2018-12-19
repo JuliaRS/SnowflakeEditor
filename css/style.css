@@ -44,7 +44,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    font-size: 18px;
 }
 
 body.snowing {
@@ -95,7 +94,7 @@ body * {
 .btns .refill {
     position: absolute;
     left: 50%;
-    bottom: 160px;
+    bottom: 25%;
     width: 44px;
     height: 44px;
     padding: 11px;
@@ -107,7 +106,7 @@ body * {
 .btns .history .next{
     position: absolute;
     left: 50%;
-    bottom: 160px;
+    bottom: 15%;
     width: 44px;
     height: 44px;
     padding: 11px;
@@ -119,7 +118,7 @@ body * {
 .btns .history .prev{
     position: absolute;
     left: 50%;
-    bottom: 160px;
+    bottom: 15%;
     width: 44px;
     height: 44px;
     padding: 11px;
@@ -285,12 +284,12 @@ body * {
 }
 
 .btns {
-    z-index: 99;
-    left: 0;
+    z-index: 80;
+    left: 0%;
     text-align: center;
-    margin-bottom: 30px;
-    font-size: 85%;
-    font-weight: 700;
+    margin-bottom: 3%;
+    font-size: 87%;
+    font-weight: 800;
 }
 
 .snowing .btns:hover {
@@ -298,8 +297,8 @@ body * {
 
 .btns div {
     border-radius: 99vw;
-    padding: 1em 1.6em;
-    margin: 0 .2em;
+    padding: .8em 1.15em;
+    margin: .1em .1em;
 }
 
 .preview p {

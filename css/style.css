@@ -288,7 +288,9 @@ body * {
     left: 0%;
     text-align: center;
     margin-bottom: 3%;
-    font-size: 87%;
+    margin-left: 1%;
+    margin-right:
+    font-size: 85%;
     font-weight: 800;
 }
 
@@ -599,7 +601,6 @@ body * {
     height: 10px;
     width: 9px;
     background-position: 50%;
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20width%3D%229%22%20height%3D%2210%22%20viewBox%3D%2240%209%209%2010%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M42%2013.05V9.5c0-.27-.2-.5-.5-.5h-1c-.27%200-.5.23-.5.5v9c0%20.27.2.5.5.5h1c.27%200%20.5-.23.5-.5v-3.55l6.15%203.9c.47.3.85.1.85-.45V9.6c0-.55-.38-.75-.85-.45L42%2013.05z%22%20fill%3D%22%235E80A7%22%20fill-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E");
 
 }
 
@@ -626,7 +627,7 @@ body * {
     height: 10px;
     width: 9px;
     background-position: 50%;
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20width%3D%229%22%20height%3D%2210%22%20viewBox%3D%2259%209%209%2010%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M66%2013.05V9.5c0-.27.2-.5.5-.5h1c.27%200%20.5.23.5.5v9c0%20.27-.2.5-.5.5h-1c-.27%200-.5-.23-.5-.5v-3.55l-6.15%203.9c-.47.3-.85.1-.85-.45V9.6c0-.55.38-.75.85-.45l6.15%203.9z%22%20fill%3D%22%235E80A7%22%20fill-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E");
+
 }
 
 .navigation_next:hover {

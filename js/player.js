@@ -4,6 +4,14 @@ const _createClass = function () { function defineProperties(target, props) { fo
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function initializePlayer(){
+     getByQuery('.player .controls .play_pause').addEventListener('click', player.play.bind(player));
+     getByQuery('.player .controls .navigation_prev').addEventListener('click', player.playPrev.bind(player));
+     getByQuery('.player .controls .navigation_next').addEventListener('click', player.playNext.bind(player));
+     getByQuery('.player .controls .progress_bar_stripe').addEventListener('click', player.pickNewProgress.bind(player));
+}
+
+
 const FILES = [
     'Jingle_Bells',
     'Harry_Potter',

@@ -13,6 +13,8 @@
     <script src="js/aframe.js"></script>
     <script src="js/player.js"></script>
     <script src="js/history.js"></script>
+    <script src="js/drawing.js"></script>
+    <script src="js/snowing.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -94,271 +96,132 @@
 	</div>
 </body>
 <script>
-    let tileContext;
-    let dotContext;
-    let startX;
-    let startY;
-    let randInterval;
-    let player = new Player(FILES);
-    let operations = new OperationsHistory();
-    const sampleText = '<a-entity class="sample" obj-model="obj: #snowflake;" scale=".2 .2 .2" position="0 0.3 -5" rotation="45 0 0" material="src:#flake_tile;transparent:true;side:double"><a-animation easing="linear" attribute="rotation" dur="10000" fill="forwards" to="45 360 0" repeat="indefinite"></a-animation></a-entity>';
+   let tileContext;
+   let dotContext;
+   let startX;
+   let startY;
+   let randInterval;
+   let player = new Player(FILES);
+   let operations = new OperationsHistory();
+   const sampleText = '<a-entity class="sample" obj-model="obj: #snowflake;" scale=".2 .2 .2" position="0 0.3 -5" rotation="45 0 0" material="src:#flake_tile;transparent:true;side:double"><a-animation easing="linear" attribute="rotation" dur="10000" fill="forwards" to="45 360 0" repeat="indefinite"></a-animation></a-entity>';
+    
+   $(document).ready(function () {
+       paper()
+       getByQuery(".player").style.visibility = "hidden";
+    });
 
-    function makeOne() {
-        let initX = (Math.random() * 100 - 50);
-        let initY = (Math.random() * 100 + 100);
-        let initZ = (Math.random() * 100 - 50);
-        let tileText = '<a-entity class="snow" position="' + initX + ' ' + initY + ' ' + initZ + '" rotation="0 0 0" obj-model="obj: #snowflake;" scale=".2 .2 .2" material="side:double;transparent:true;src:#flake_tile"><a-animation attribute="position" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + initX + ' ' + (Math.random() * 40 - 200) + ' ' + initZ + '"></a-animation><a-animation attribute="rotation" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + (Math.random() * 30) + ' ' + (Math.random() * 360) + ' 0"></a-animation></a-entity>';
-        $(tileText).appendTo($('a-scene'));
-    }
+   $(window).resize(function () {
+       paper();
+   });
 
-    function maintain() {
-        const numSnowflakes = 120;
-        if ($('a-entity.snow').length < numSnowflakes) {
-            makeOne();
-        } else if ($('a-entity.snow').eq(0).attr('position').y < -100) {
-            $('a-entity.snow').eq(0).remove();
-        }
-    }
+   window.addEventListener('DOMContentLoaded', initializePlayer);
 
-    function snow() {
-        randInterval = setInterval(function () {
-            maintain();
-        }, 300);
-    }
+   let isDrawing = 0;
+   let timeoutId;
+   $('.wrapper').on('click', function (e) {
+       if (!timeoutId){
+           timeoutId = setTimeout('clearTimeout(timeoutId);', 500);
+       }
+       
+       let tileX = e.pageX - $('#main_canvas').offset().left;
+       let tileY = e.pageY - $('#main_canvas').offset().top;
+       let offsetX = e.pageX - $(this).offset().left;
+       let offsetY = e.pageY - $(this).offset().top;
 
-    function backToPreview(){
-      clearInterval(randInterval);
-            $('a-entity.snow').remove();
-            $('body').removeClass('snowing');
-            $(sampleText).appendTo($('.container'));
-            $('#cam').removeAttr('look-controls');
-            $('#cam').attr('rotation', '0 0 0');
-            scene = document.querySelector('a-scene');
-            scene.exitVR();
-   }
-
-   function letItSnow(){
-     $('body').addClass('snowing');
-     let dataUrl = tile.toDataURL()
-     applyImg(dataUrl);
-     snow();
-     $('.sample').remove();
-     $('#cam').attr('look-controls', '')
-   }
-
-    $('.start').on('click', function () {
-        if ($('body').hasClass('snowing')) {    
-            backToPreview();
-            player.pause();
-            getByQuery(".player").style.visibility = "hidden";
-        } else {
-            getByQuery(".player").style.visibility = "visible";
-            player.play();
-            letItSnow();
-        }
-    })
-
-   function createDot(className, x, y){
-     return '<div class="' + className + '" style="left:' + x + 'px;top:' + y + 'px;"></div>';  
-
-   } 
-   function makeFirstDot(tileX, tileY, offsetX, offsetY){
-      let dataUrl = tile.toDataURL()
-      operations.push(dataUrl.toString());
-      tileContext.globalCompositeOperation = 'destination-out';
-      dotContext.globalCompositeOperation = 'source-over';
-      tileContext.beginPath();
-      dotContext.beginPath();
-      tileContext.moveTo(tileX, tileY);
-      dotContext.moveTo(offsetX, offsetY);
-      isDrawing = 1;
-      return createDot('first dot', offsetX, offsetY);
-   }
-
-   function continueDrawing(tileX, tileY, offsetX, offsetY){
-     tileContext.lineTo(tileX, tileY);
-     dotContext.lineTo(offsetX, offsetY);
-     dotContext.stroke();
-     isDrawing++;
-     return createDot('dot', offsetX, offsetY);
-   }
-
-   function endDrawing(){
-      tileContext.closePath();
-      tileContext.fill();
-      dotContext.closePath();
-      dotContext.clearRect(0, 0, $('#dot_canvas').width(), $('#dot_canvas').height());
-      isDrawing = 0;
-      $('.dot').remove();
-   }
-
-
-    let isDrawing = 0;
-    let timeoutId;
-    $('.wrapper').on('click', function (e) {
-        if (!timeoutId){
-          timeoutId = setTimeout('clearTimeout(timeoutId);', 500);
-        }
-        let tileX = e.pageX - $('#main_canvas').offset().left;
-        let tileY = e.pageY - $('#main_canvas').offset().top;
-        let offsetX = e.pageX - $(this).offset().left;
-        let offsetY = e.pageY - $(this).offset().top;
-
-        if (isDrawing == 0) {     
+       if (isDrawing == 0) {     
            startX = e.pageX;
            startY = e.pageY;
            let dotText = makeFirstDot(tileX, tileY, offsetX, offsetY);
            $(dotText).appendTo($(this));
            return;
-        } 
-        let dist = Math.sqrt((e.pageX - startX) * (e.pageX - startX) + (e.pageY - startY) * (e.pageY - startY));
-        if (dist < 15) {
-            endDrawing();
-            let dataUrl = tile.toDataURL()
-            applyImg(dataUrl);
-            operations.current = dataUrl;
-            $('.prev').removeClass('disable');
-        } else {
-             
-            $(continueDrawing(tileX, tileY, offsetX, offsetY)).appendTo($(this));
+       } 
+        
+       let dist = Math.sqrt((e.pageX - startX) * (e.pageX - startX) + (e.pageY - startY) * (e.pageY - startY));
+       if (dist < 15) {
+           endDrawing();
+           let dataUrl = tile.toDataURL()
+           applyImg(dataUrl);
+           operations.current = dataUrl;
+           $('.prev').removeClass('disable');
+       } else {      
+           $(continueDrawing(tileX, tileY, offsetX, offsetY)).appendTo($(this));
        }
-
-    })
-    $('.wrapper').on('mousemove', function (e) {
-        let dist = Math.sqrt((e.pageX - startX) * (e.pageX - startX) + (e.pageY - startY) * (e.pageY - startY));
-        if (dist < 15) {
-            $('.first').addClass('on');
-        } else {
-            $('.first').removeClass('on');
-        }
-    })
-    $('.wrapper').on('dblclick', function(e) {
-     is_drawing = 0;
-     clearTimeout(timeoutId);
-     dotContext.clearRect(0, 0, $('#dot_canvas').width(), $('#dot_canvas').height());
-     $('.dot').remove();
-    })
-
-
-    function applyImg(dataUrl) {
-        $('a-assets > img').attr('src', dataUrl);
-        $('.sample').remove();
-        $(sampleText).appendTo($('.container'))
-    }
-
-    $('.preview').on('click', function () {
-        $('.wrapper').toggleClass('pre')
-        $(this).toggleClass('pre')
-        if ($('body').hasClass('sneak')) {
-            $('body').removeClass('sneak')
-        } else {
-            $('body').addClass('sneak')
-            let dataUrl = tile.toDataURL()
-            applyImg(dataUrl)
-        }
-    })
-
-    $('.next').on('click', function () {
-      let next = operations.getNext();
-      if (next !== null) {
-         let img = new Image();
-         img.onload = function(){
-         tileContext.globalCompositeOperation = 'copy';
-         tileContext.drawImage(img, 0, 0,  $('#main_canvas').width(), $('#main_canvas').height());
-      };
-      img.src = next;
-      applyImg(next);
-      if (operations.currentIndex == operations.length() - 1)
-         $('.next').addClass('disable');
-      }
-    })
-
-    $('.prev').on('click', function () {
-      let previous = operations.getPrev();
-      let img = new Image();
-      img.onload = function(){
-         tileContext.globalCompositeOperation = 'copy';
-         tileContext.drawImage(img, 0, 0,  $('#main_canvas').width(), $('#main_canvas').height());
-      };
-      img.src = previous;
-      applyImg(previous);
-      $('.next').removeClass('disable');
-      if (operations.currentIndex == 0){
-         $('.prev').addClass('disable');
-      }
     });
 
-    function paper() {
-        $('#main_canvas').attr('height', $('.wrapper').height() * 0.7 * 2)
-        $('#main_canvas').attr('width', $('.wrapper').height() * 0.7 * 0.54838709677 * 2)
-        $('#dot_canvas').attr('width', $('.wrapper').width() * 2)
-        $('#dot_canvas').attr('height', $('.wrapper').height() * 2)
-        tile = document.getElementById("main_canvas");
-        tile.style.width = tile.width / 2 + 'px';
-        tile.style.height = tile.height / 2 + 'px';
-        tile.getContext('2d').scale(2, 2);
-        tileContext = tile.getContext("2d");
-        tileContext.fillStyle = "rgba(255,255,255,1)";
-        tileContext.fillRect(0, 0, $('#main_canvas').width(), $('#main_canvas').height());
-        $('.cover.right').css('top', ($('#main_canvas').offset().top - $('.wrapper').offset().top) + 'px');
-        $('.cover.left').css('top', ($('#main_canvas').offset().top - $('.wrapper').offset().top) + 'px');
-        $('.cover.right').css('left', (($('.wrapper').width() - $('#main_canvas').width()) / 2 + $('#main_canvas').width()) + 'px');
-        $('.cover.left').css('right', (($('.wrapper').width() - $('#main_canvas').width()) / 2 + $('#main_canvas').width()) + 'px');
-        dot = document.getElementById("dot_canvas");
-        dot.style.width = dot.width / 2 + 'px';
-        dot.style.height = dot.height / 2 + 'px';
-        dot.getContext('2d').scale(2, 2);
-        dotContext = dot.getContext("2d");
-        dotContext.fillStyle = "rgba(255,0,0,1)";
-        dotContext.strokeStyle = '#666';
-        dotContext.setLineDash([2, 4]);
-        dotContext.lineWidth = 1;
-    }
+   $('.wrapper').on('mousemove', function (e) {
+       let dist = Math.sqrt((e.pageX - startX) * (e.pageX - startX) + (e.pageY - startY) * (e.pageY - startY));
+       if (dist < 15) {
+           $('.first').addClass('on');
+       } else {
+           $('.first').removeClass('on');
+       }
+   });
 
-    function getImage() {
-      html2canvas($('.wrapper').get(0)).then(function(canvas) {
-      let img = canvas.toDataURL();
-      let link = document.createElement('a');
-      link.href = img;
-      link.download = 'snowflake.png';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-     });
-    }
+   $('.wrapper').on('dblclick', function(e) {
+       is_drawing = 0;
+       clearTimeout(timeoutId);
+       claerDotCanvas();
+   });
 
-    $(document).ready(function () {
-        paper()
-        getByQuery(".player").style.visibility = "hidden";
-    })
+   $('.preview').on('click', function () {
+       $('.wrapper').toggleClass('pre')
+       $(this).toggleClass('pre')
+       if ($('body').hasClass('sneak')) {
+           $('body').removeClass('sneak')
+       } else {
+           $('body').addClass('sneak')
+           let dataUrl = tile.toDataURL()
+           applyImg(dataUrl)
+       }
+   });
 
-    $(window).resize(function () {
-        paper();
-    })
-    $('.save').on('click', getImage)
-    $('.refill').on('click', function () {
-        if (confirm('Are you sure you want to reset?')) {
-            tileContext.closePath();
-            tileContext.globalCompositeOperation = 'source-over';
-            tileContext.fillRect(0, 0, $('#main_canvas').width(), $('#main_canvas').height());
-            dotContext.clearRect(0, 0, $('#dot_canvas').width(), $('#dot_canvas').height());
-            dotContext.closePath()
-            isDrawing = 0
-            $('.dot').remove()
-            let dataUrl = tile.toDataURL()
-            applyImg(dataUrl)
-            operations.reset();
-            $('.next').addClass('disable');
-            $('.prev').addClass('disable');
-        }
-    })
+   $('.next').on('click', function () {
+       let next = operations.getNext();
+       if (next !== null) {
+           applyHistory(next);
+         
+           if (operations.currentIndex == operations.length() - 1){
+               $('.next').addClass('disable');
+           }
+       }
+   });
 
-   function initializePlayer(){
-     getByQuery('.player .controls .play_pause').addEventListener('click', player.play.bind(player));
-     getByQuery('.player .controls .navigation_prev').addEventListener('click', player.playPrev.bind(player));
-     getByQuery('.player .controls .navigation_next').addEventListener('click', player.playNext.bind(player));
-     getByQuery('.player .controls .progress_bar_stripe').addEventListener('click', player.pickNewProgress.bind(player));
-  }
-  window.addEventListener('DOMContentLoaded', initializePlayer);
+   $('.prev').on('click', function () {
+       let previous = operations.getPrev();
+       applyHistory(previous);
+       $('.next').removeClass('disable');
+       if (operations.currentIndex == 0){
+           $('.prev').addClass('disable');
+       }
+   });
+
+   $('.save').on('click', getImage)
+   $('.refill').on('click', function () {
+       if (confirm('Are you sure you want to reset?')) {
+           isDrawing = 0;
+           tileContext.closePath();
+           tileContext.globalCompositeOperation = 'source-over';
+           tileContext.fillRect(0, 0, $('#main_canvas').width(), $('#main_canvas').height());
+           dotContext.closePath();
+           clearDotCanvas();
+           let dataUrl = tile.toDataURL();
+           applyImg(dataUrl);
+           operations.reset();
+           $('.next').addClass('disable');
+           $('.prev').addClass('disable');
+       }
+   });
+
+   $('.start').on('click', function () {
+       if ($('body').hasClass('snowing')) {    
+           backToPreview();
+           player.pause();
+           getByQuery(".player").style.visibility = "hidden";
+       } else {
+           getByQuery(".player").style.visibility = "visible";
+           player.play();
+           letItSnow();
+       }
+   })
 </script>
 </html>

@@ -1,9 +1,24 @@
- function makeOne() {
+class Snowflake{
+   constructor(x, y, z){
+       this.x = x;
+       this.y = y;
+       this.z = z
+   }
+
+   toString(){
+      return '<a-entity class="snow" position="' + this.x + ' ' + this.y + ' ' + this.z + '" rotation="0 0 0" obj-model="obj: #snowflake;" scale=".2 .2 .2" material="side:double;transparent:true;src:#flake_tile"><a-animation attribute="position" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + this.x + ' ' + (Math.random() * 40 - 200) + ' ' + this.z + '"></a-animation><a-animation attribute="rotation" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + (Math.random() * 30) + ' ' + (Math.random() * 360) + ' 0"></a-animation></a-entity>';
+   }
+
+} 
+
+
+
+function makeOne() {
         let initX = (Math.random() * 100 - 50);
         let initY = (Math.random() * 100 + 100);
         let initZ = (Math.random() * 100 - 50);
-        let snowflakeText = '<a-entity class="snow" position="' + initX + ' ' + initY + ' ' + initZ + '" rotation="0 0 0" obj-model="obj: #snowflake;" scale=".2 .2 .2" material="side:double;transparent:true;src:#flake_tile"><a-animation attribute="position" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + initX + ' ' + (Math.random() * 40 - 200) + ' ' + initZ + '"></a-animation><a-animation attribute="rotation" easing="linear" dur="' + (Math.random() * 20000 + 15000) + '" fill="forwards" to="' + (Math.random() * 30) + ' ' + (Math.random() * 360) + ' 0"></a-animation></a-entity>';
-        $(snowflakeText).appendTo($('a-scene'));
+        let snowflake = new Snowflake(initX, initY, initZ); 
+        $(snowflake.toString()).appendTo($('a-scene'));
     }
 
     function maintain() {

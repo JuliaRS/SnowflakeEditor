@@ -45,3 +45,4 @@ class OperationsHistory{
      return this.operations.length;
    }
 }
+
